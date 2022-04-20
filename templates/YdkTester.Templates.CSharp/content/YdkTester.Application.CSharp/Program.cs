@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using YdkTester;
 using YdkTester.Runner;
 
 namespace YdkTesterNamespace;
