@@ -7,7 +7,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ImplicitUsings>enable</ImplicitUsings>
     <BaseOutputPath>..\..\bin\YdkTester</BaseOutputPath>
-    <Description>C# library for testing comboes of .ydk decks.</Description>
+    <Description>C# library for testing combos of .ydk decks.</Description>
   </PropertyGroup>
 
   <ItemGroup>
