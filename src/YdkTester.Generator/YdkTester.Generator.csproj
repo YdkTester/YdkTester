@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <LangVersion>latestmajor</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>ydktester-generator</ToolCommandName>
+    <PackageId>dotnet-ydktester-generator</PackageId>
+    <UseAppHost>true</UseAppHost>
+    <AssemblyName>ydktester-generator</AssemblyName>
+    <BaseOutputPath>..\..\bin\YdkTester.Generator</BaseOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YdkTester\YdkTester.csproj" />
+  </ItemGroup>
+
+</Project>

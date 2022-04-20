@@ -1,0 +1,23 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CardsNamespace Condition=" '$(CardsNamespace)' == '' ">$(RootNameSpace)</CardsNamespace>
+    <CardsOutputPath Condition=" '$(CardsOutputPath)' == '' ">$(ProjectDir)Generated/Cards.cs</CardsOutputPath>
+    
+    <EdoProPath Condition=" '$(EdoProPath)' == '' And Exists ('C:\ProjectIgnis') ">C:\ProjectIgnis</EdoProPath>
+    <EdoProPath Condition=" '$(EdoProPath)' == '' And Exists ('/Applications/ProjectIgnis') ">/Applications/ProjectIgnis</EdoProPath>
+    <EdoProPath Condition=" '$(EdoProPath)' == '' And Exists ('/opt/edopro') ">/opt/edopro</EdoProPath>
+
+    <DeckPath Condition=" '$(DeckName)' != '' ">$(EdoProPath)/deck/$(DeckName).ydk</DeckPath>
+  </PropertyGroup>
+
+  <Target Name="GenerateCards" BeforeTargets="BeforeBuild">
+    <!-- Remove this line if they make dotnet tool restore part of dotnet restore build -->
+    <!-- https://github.com/dotnet/sdk/issues/4241 -->
+    <Exec Command="dotnet tool restore" />
+    
+    <Message Text="Generating Cards.cs -&gt; $(MSBuildThisFileDirectory)Generated/Cards.cs" Importance="high" />
+    <Exec Command="dotnet ydktester-generator --edoProPath &quot;$(EdoProPath)&quot; --deckPath &quot;$(DeckPath)&quot; --namespace $(CardsNamespace) -o &quot;$(CardsOutputPath)&quot;" />
+  </Target>
+
+</Project>

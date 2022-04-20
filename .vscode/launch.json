@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Test Reptilianne",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-test-reptilianne",
+            "program": "${workspaceFolder}/test/ReptilianneTest/bin/Debug/net6.0/ReptilianneTest.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/test/ReptilianneTest",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}

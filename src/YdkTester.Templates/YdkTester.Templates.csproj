@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Title>YdkTester templates for C#</Title>
+    <PackageId>YdkTester.Templates.CSharp</PackageId>
+    <Description>A set of C# templates for writing tests for .ydk deck files.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="content/**/*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../../Libs/GtkSharp/Icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
