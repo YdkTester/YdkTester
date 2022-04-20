@@ -2,5 +2,6 @@
   <PropertyGroup>
     <PackageProjectUrl>https://github.com/YdkTester/YdkTester</PackageProjectUrl>
     <RepositoryUrl>https://github.com/YdkTester/YdkTester</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 </Project>
