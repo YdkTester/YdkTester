@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{91F4204B-7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReptilianneTest", "test\ReptilianneTest\ReptilianneTest.csproj", "{2C178838-C2C8-47E0-ACF2-0C2F7AE47411}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{EDC61558-CC6A-490A-B49B-8B0934C612BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YdkTester.Templates.CSharp", "templates\YdkTester.Templates.CSharp\YdkTester.Templates.CSharp.csproj", "{A2B29964-C560-4CB3-AD9F-80FDE87C5408}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,8 +42,13 @@ Global
 		{2C178838-C2C8-47E0-ACF2-0C2F7AE47411}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C178838-C2C8-47E0-ACF2-0C2F7AE47411}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C178838-C2C8-47E0-ACF2-0C2F7AE47411}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2B29964-C560-4CB3-AD9F-80FDE87C5408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2B29964-C560-4CB3-AD9F-80FDE87C5408}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2B29964-C560-4CB3-AD9F-80FDE87C5408}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2B29964-C560-4CB3-AD9F-80FDE87C5408}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2C178838-C2C8-47E0-ACF2-0C2F7AE47411} = {91F4204B-74E1-4FC1-B973-9EC365FF4F56}
+		{A2B29964-C560-4CB3-AD9F-80FDE87C5408} = {EDC61558-CC6A-490A-B49B-8B0934C612BB}
 	EndGlobalSection
 EndGlobal

@@ -13,6 +13,7 @@
     <UseAppHost>true</UseAppHost>
     <AssemblyName>ydktester-generator</AssemblyName>
     <BaseOutputPath>..\..\bin\YdkTester.Generator</BaseOutputPath>
+    <Description>A tool to autogenerate Cards.cs file from the specified .ydk file.</Description>
   </PropertyGroup>
 
   <ItemGroup>

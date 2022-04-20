@@ -4,9 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <BuildOutputTargetFolder>tasks</BuildOutputTargetFolder>
-    <NoWarn>NU5100,NU5128</NoWarn>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoWarn>NU5128</NoWarn>
     <BaseOutputPath>..\..\bin\YdkTester.Generator.Task</BaseOutputPath>
+    <Description>Provides a task that extends msbuild by automatically running ydktester-generator dotnet tool to generate Cards.cs.</Description>
   </PropertyGroup>
 
   <ItemGroup>
