@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <CardsNamespace Condition=" '$(CardsNamespace)' == '' ">$(RootNameSpace)</CardsNamespace>
-    <CardsOutputPath Condition=" '$(CardsOutputPath)' == '' ">$(ProjectDir)Generated/Cards.cs</CardsOutputPath>
-    <CardsLanguage Condition=" '$(CardsLanguage)' == '' ">CS</CardsLanguage>
+    <CardsLanguage Condition=" '$(CardsLanguage)' == '' ">cs</CardsLanguage>
+    <CardsOutputPath Condition=" '$(CardsOutputPath)' == '' ">$(ProjectDir)Generated/Cards.$(CardsLanguage)</CardsOutputPath>
     
     <EdoProPath Condition=" '$(EdoProPath)' == '' And Exists ('C:\ProjectIgnis') ">C:\ProjectIgnis</EdoProPath>
     <EdoProPath Condition=" '$(EdoProPath)' == '' And Exists ('/Applications/ProjectIgnis') ">/Applications/ProjectIgnis</EdoProPath>
@@ -17,7 +17,7 @@
     <!-- https://github.com/dotnet/sdk/issues/4241 -->
     <Exec Command="dotnet tool restore" />
     
-    <Message Text="Generating Cards.cs -&gt; $(MSBuildThisFileDirectory)Generated/Cards.cs" Importance="high" />
+    <Message Text="Generating Cards.$(CardsLanguage) -&gt; $(CardsOutputPath)" Importance="high" />
     <Exec Command="dotnet ydktester-generator --edoProPath &quot;$(EdoProPath)&quot; --deckPath &quot;$(DeckPath)&quot; --namespace $(CardsNamespace) --language $(CardsLanguage) -o &quot;$(CardsOutputPath)&quot;" />
   </Target>
 
