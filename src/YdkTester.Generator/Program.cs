@@ -6,7 +6,7 @@ namespace YdkTester.Generator;
 static class Program
 {
     public static void Main(string[] args)
-        => Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o => Run(o));
+        => (new Parser(with => with.CaseInsensitiveEnumValues = true)).ParseArguments<Options>(args).WithParsed<Options>(o => Run(o));
 
     private static void Run(Options options)
     {
@@ -20,7 +20,9 @@ static class Program
         if (File.Exists(options.OutputPath))
         {
             var text = File.ReadAllText(options.OutputPath);
-            var pattern = @"Card { Id = (?<id>[0-9]+), Title = ""(?<title>[^""]+)"", Type = \(CardType\)(?<type>[0-9]+), Atk = (?<atk>[0-9]+), Def = (?<def>[0-9]+), Level = (?<level>[0-9]+), Race = \(CardRace\)(?<race>[0-9]+), Attribute = \(CardAttribute\)(?<attribute>[0-9]+) };";
+            var cspattern = @"Card { Id = (?<id>[0-9]+), Title = ""(?<title>[^""]+)"", Type = \(CardType\)(?<type>[0-9]+), Atk = (?<atk>[0-9]+), Def = (?<def>[0-9]+), Level = (?<level>[0-9]+), Race = \(CardRace\)(?<race>[0-9]+), Attribute = \(CardAttribute\)(?<attribute>[0-9]+) };";
+            var fspattern = @"Card\(Id = (?<id>[0-9]+), Title = ""(?<title>[^""]+)"", Type = enum\<CardType\>(?<type>[0-9]+), Atk = (?<atk>[0-9]+), Def = (?<def>[0-9]+), Level = (?<level>[0-9]+), Race = enum\<CardRace\>(?<race>[0-9]+), Attribute = enum\<CardAttribute\>(?<attribute>[0-9]+)\)";
+            var pattern = options.Language == Language.CS ? cspattern : fspattern;
 
             foreach (Match match in Regex.Matches(text, pattern, RegexOptions.None))
             {
@@ -59,34 +61,67 @@ static class Program
         lines.Add("// ##### DO NOT MODIFY IT BY HAND #######");
         lines.Add("// ######################################");
         lines.Add("");
-        lines.Add("using YdkTester;");
-        lines.Add("");
-        lines.Add($"namespace {options.Namespace};");
-        lines.Add("");
-        lines.Add("public class Cards");
-        lines.Add("{");
-        lines.Add($"    public const string DeckPath = \"{options.DeckPath}\";");
-        lines.Add("");
+
+        if (options.Language == Language.CS)
+        {
+            lines.Add("using YdkTester;");
+            lines.Add("");
+            lines.Add($"namespace {options.Namespace};");
+            lines.Add("");
+            lines.Add("public class Cards");
+            lines.Add("{");
+            lines.Add($"    public const string DeckPath = \"{options.DeckPath}\";");
+            lines.Add("");
+        }
+        else
+        {
+            lines.Add($"namespace {options.Namespace}");
+            lines.Add("");
+            lines.Add("open YdkTester");
+            lines.Add("");
+            lines.Add("type Cards =");
+            lines.Add($"    static member DeckPath : string = \"{options.DeckPath}\"");
+            lines.Add("");
+        }
 
         foreach (var card in cardDict)
         {
-            var cardText = $"    public static readonly Card {GetSafeName(card.Value.Title)} = new Card";
-            cardText += " { ";
-            cardText += $"Id = {card.Key}, ";
-            cardText += $"Title = \"{card.Value.Title}\", ";
-            cardText += $"Type = (CardType){(int)card.Value.Type}, ";
-            cardText += $"Atk = {card.Value.Atk}, ";
-            cardText += $"Def = {card.Value.Def}, ";
-            cardText += $"Level = {card.Value.Level}, ";
-            cardText += $"Race = (CardRace){(int)card.Value.Race}, ";
-            cardText += $"Attribute = (CardAttribute){(int)card.Value.Attribute}";
-            cardText += " };";
+            var cardText = "";
+
+            if (options.Language == Language.CS)
+            {
+                cardText += $"    public static readonly Card {GetSafeName(card.Value.Title)} = new Card";
+                cardText += " { ";
+                cardText += $"Id = {card.Key}, ";
+                cardText += $"Title = \"{card.Value.Title}\", ";
+                cardText += $"Type = (CardType){(int)card.Value.Type}, ";
+                cardText += $"Atk = {card.Value.Atk}, ";
+                cardText += $"Def = {card.Value.Def}, ";
+                cardText += $"Level = {card.Value.Level}, ";
+                cardText += $"Race = (CardRace){(int)card.Value.Race}, ";
+                cardText += $"Attribute = (CardAttribute){(int)card.Value.Attribute}";
+                cardText += " };";
+            }
+            else
+            {
+                cardText += $"    static member {GetSafeName(card.Value.Title)} : Card = new Card(";
+                cardText += $"Id = {card.Key}, ";
+                cardText += $"Title = \"{card.Value.Title}\", ";
+                cardText += $"Type = enum<CardType>{(int)card.Value.Type}, ";
+                cardText += $"Atk = {card.Value.Atk}, ";
+                cardText += $"Def = {card.Value.Def}, ";
+                cardText += $"Level = {card.Value.Level}, ";
+                cardText += $"Race = enum<CardRace>{(int)card.Value.Race}, ";
+                cardText += $"Attribute = enum<CardAttribute>{(int)card.Value.Attribute}";
+                cardText += ")";
+            }
 
             lines.Add(cardText);
             lines.Add("");
         }
 
-        lines.Add("}");
+        if (options.Language == Language.CS)
+            lines.Add("}");
 
         var dir = Path.GetDirectoryName(options.OutputPath) ?? "";
 
