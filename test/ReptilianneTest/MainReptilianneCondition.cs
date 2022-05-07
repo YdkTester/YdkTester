@@ -12,8 +12,9 @@ public class MainReptilianneCondition : ICondition
             return true;
 
         if (hand.HasCard(Cards.SummonerMonk) &&
-            hand.HasCard(c => c.Type.HasFlag(CardType.Spell)) &&
-            !hand.HasCard(Cards.KeursetheOgdoadicLight))
+            !hand.HasCard(Cards.KeursetheOgdoadicLight) &&
+            deck.MainDeck.HasCard(Cards.NightSwordSerpent) &&
+            hand.HasCard(c => c.Type.HasFlag(CardType.Spell)))
             return true;
 
         return CheckCombos(deck, hand);
@@ -30,7 +31,9 @@ public class MainReptilianneCondition : ICondition
 
         if (hand.UseCard(Cards.NunutheOgdoadicRemnant))
         {
-            if (hand.HasCard(c => c.Race == CardRace.Reptile) || hand.UseCard(Cards.FoolishBurial))
+            if (hand.HasCard(Cards.ReptilianneRamifications) ||
+                hand.HasCard(Cards.FoolishBurial) ||
+                hand.HasCard(c => c != Cards.NunutheOgdoadicRemnant && c.Race == CardRace.Reptile))
             {
                 return true;
             }

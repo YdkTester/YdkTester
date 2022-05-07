@@ -8,6 +8,9 @@ public class ProtectionCondition : ICondition
 
     public bool Check(Deck deck, CardSet hand)
     {
-        return hand.HasCard(Cards.InstantFusion) || hand.HasCard(Cards.CalledbytheGrave);
+        return hand.HasCard(Cards.InstantFusion) ||
+            hand.HasCard(Cards.CalledbytheGrave) ||
+            hand.HasCard(Cards.CrossoutDesignator) ||
+            hand.HasCard(Cards.PSYFramegearGamma);
     }
 }

@@ -9,7 +9,7 @@ namespace ReptilianneTest;
 
 public class Cards
 {
-    public const string DeckPath = "/Applications/ProjectIgnis/deck/06_Reptilianne.ydk";
+    public const string DeckPath = "/Applications/ProjectIgnis/deck/07_Reptilianne.ydk";
 
     public static readonly Card KeursetheOgdoadicLight = new Card { Id = 62383431, Title = "Keurse, the Ogdoadic Light", Type = (CardType)33, Atk = 400, Def = 2400, Level = 8, Race = (CardRace)524288, Attribute = (CardAttribute)16 };
 
@@ -95,7 +95,21 @@ public class Cards
 
     public static readonly Card AlienKid = new Card { Id = 64160836, Title = "Alien Kid", Type = (CardType)33, Atk = 1600, Def = 700, Level = 4, Race = (CardRace)524288, Attribute = (CardAttribute)16 };
 
+    public static readonly Card CrossoutDesignator = new Card { Id = 65681983, Title = "Crossout Designator", Type = (CardType)65538, Atk = 0, Def = 0, Level = 0, Race = (CardRace)0, Attribute = (CardAttribute)0 };
+
+    public static readonly Card PSYFramegearGamma = new Card { Id = 38814750, Title = "PSY-Framegear Gamma", Type = (CardType)33558561, Atk = 1000, Def = 0, Level = 2, Race = (CardRace)1048576, Attribute = (CardAttribute)16 };
+
+    public static readonly Card OfferingtotheSnakeDeity = new Card { Id = 93217231, Title = "Offering to the Snake Deity", Type = (CardType)4, Atk = 0, Def = 0, Level = 0, Race = (CardRace)0, Attribute = (CardAttribute)0 };
+
+    public static readonly Card ReptilianneRecoil = new Card { Id = 17000165, Title = "Reptilianne Recoil", Type = (CardType)524290, Atk = 0, Def = 0, Level = 0, Race = (CardRace)0, Attribute = (CardAttribute)0 };
+
+    public static readonly Card ReptilianneGardna = new Card { Id = 43002864, Title = "Reptilianne Gardna", Type = (CardType)33, Atk = 0, Def = 2000, Level = 4, Race = (CardRace)524288, Attribute = (CardAttribute)2 };
+
+    public static readonly Card ReptilianneViper = new Card { Id = 42303365, Title = "Reptilianne Viper", Type = (CardType)4129, Atk = 0, Def = 0, Level = 2, Race = (CardRace)524288, Attribute = (CardAttribute)32 };
+
     public static readonly Card EvilDragonAnanta = new Card { Id = 8400623, Title = "Evil Dragon Ananta", Type = (CardType)33554465, Atk = -2, Def = -2, Level = 8, Race = (CardRace)524288, Attribute = (CardAttribute)32 };
+
+    public static readonly Card TorrentialTribute = new Card { Id = 53582587, Title = "Torrential Tribute", Type = (CardType)4, Atk = 0, Def = 0, Level = 0, Race = (CardRace)0, Attribute = (CardAttribute)0 };
 
     public static readonly Card ApollousaBowoftheGoddess = new Card { Id = 4280259, Title = "Apollousa, Bow of the Goddess", Type = (CardType)67108897, Atk = -2, Def = 135, Level = 4, Race = (CardRace)4, Attribute = (CardAttribute)8 };
 

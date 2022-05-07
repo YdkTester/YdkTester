@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <DeckName>06_Reptilianne</DeckName>
+    <DeckName>07_Reptilianne</DeckName>
   </PropertyGroup>
 
   <ItemGroup>
