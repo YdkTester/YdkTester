@@ -28,4 +28,6 @@ public class Options
 
     [Option("debug", Required = false, HelpText = "Prints out each hand and if the conditions were successful")]
     public bool Debug { get; set; }
+
+    public Card[]? StartingHand { get; set; }
 }

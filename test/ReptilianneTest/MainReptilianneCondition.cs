@@ -2,25 +2,39 @@
 
 namespace ReptilianneTest;
 
-public class MainReptilianneCondition : ICondition
+public class ReptilianneDrawCondition : ICondition
 {
     public string Name => "Reptilianne Draw";
 
-    public bool Check(Deck deck, CardSet hand)
+    private static CardAction _nonNunuReptileMonster = new CardAction(c => c.Type == CardType.Reptile && c != Cards.NunutheOgdoadicRemnant);
+    private static CardAction _monsterCard = new CardAction(c => c.Category.HasFlag(CardCategory.Monster));
+    private static CardAction _spellCard = new CardAction(c => c.Category.HasFlag(CardCategory.Spell));
+
+    public bool Check(CardSet deck, CardSet hand)
     {
         if (hand.UseCard(Cards.SnakeRain))
             return true;
 
+        if (hand.HasCard(Cards.NunutheOgdoadicRemnant) || (hand.HasCard(Cards.SmallWorld) && hand.HasCard(_monsterCard)))
+        {
+            if (hand.HasCard(Cards.ReptilianneRamifications) ||
+                hand.HasCard(Cards.FoolishBurial) ||
+                hand.HasCard(_nonNunuReptileMonster))
+            {
+                return true;
+            }
+        }
+
         if (hand.HasCard(Cards.SummonerMonk) &&
             !hand.HasCard(Cards.KeursetheOgdoadicLight) &&
-            deck.MainDeck.HasCard(Cards.NightSwordSerpent) &&
-            hand.HasCard(c => c.Type.HasFlag(CardType.Spell)))
+            deck.HasCard(Cards.NightSwordSerpent) &&
+            hand.HasCard(_spellCard))
             return true;
 
         return CheckCombos(deck, hand);
     }
 
-    private bool CheckCombos(Deck deck, CardSet hand)
+    private bool CheckCombos(CardSet deck, CardSet hand)
     {
         var usedRamifications = false;
         if (hand.UseCard(Cards.ReptilianneRamifications))
@@ -33,7 +47,7 @@ public class MainReptilianneCondition : ICondition
         {
             if (hand.HasCard(Cards.ReptilianneRamifications) ||
                 hand.HasCard(Cards.FoolishBurial) ||
-                hand.HasCard(c => c != Cards.NunutheOgdoadicRemnant && c.Race == CardRace.Reptile))
+                hand.HasCard(_nonNunuReptileMonster))
             {
                 return true;
             }
@@ -57,7 +71,7 @@ public class MainReptilianneCondition : ICondition
         {
             nauyaInGY = true;
 
-            if (deck.MainDeck.HasCard(Cards.KeursetheOgdoadicLight))
+            if (deck.HasCard(Cards.KeursetheOgdoadicLight))
             {
                 keurseInGY = true;
             }

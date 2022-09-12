@@ -6,8 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <DeckName>L_Reptilianne</DeckName>
-    <CardsGenerator>dotnet run --project ../../src/YdkTester.Generator/YdkTester.Generator.csproj -- </CardsGenerator>
+    <DeckName>RngTest</DeckName>
   </PropertyGroup>
 
   <ItemGroup>

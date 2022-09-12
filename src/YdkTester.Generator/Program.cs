@@ -20,8 +20,8 @@ static class Program
         if (File.Exists(options.OutputPath))
         {
             var text = File.ReadAllText(options.OutputPath);
-            var cspattern = @"Card { Id = (?<id>[0-9]+), Title = ""(?<title>[^""]+)"", Type = \(CardType\)(?<type>[0-9]+), Atk = (?<atk>[0-9]+), Def = (?<def>[0-9]+), Level = (?<level>[0-9]+), Race = \(CardRace\)(?<race>[0-9]+), Attribute = \(CardAttribute\)(?<attribute>[0-9]+) };";
-            var fspattern = @"Card\(Id = (?<id>[0-9]+), Title = ""(?<title>[^""]+)"", Type = enum\<CardType\>(?<type>[0-9]+), Atk = (?<atk>[0-9]+), Def = (?<def>[0-9]+), Level = (?<level>[0-9]+), Race = enum\<CardRace\>(?<race>[0-9]+), Attribute = enum\<CardAttribute\>(?<attribute>[0-9]+)\)";
+            var cspattern = @"Card { Id = (?<id>[0-9]+), Title = ""(?<title>[^""]+)"", Category = \(CardCategory\)(?<type>[0-9]+), Atk = (?<atk>[0-9]+), Def = (?<def>[0-9]+), Level = (?<level>[0-9]+), Type = \(CardType\)(?<race>[0-9]+), Attribute = \(CardAttribute\)(?<attribute>[0-9]+) };";
+            var fspattern = @"Card\(Id = (?<id>[0-9]+), Title = ""(?<title>[^""]+)"", Category = enum\<CardCategory\>(?<type>[0-9]+), Atk = (?<atk>[0-9]+), Def = (?<def>[0-9]+), Level = (?<level>[0-9]+), Type = enum\<CardType\>(?<race>[0-9]+), Attribute = enum\<CardAttribute\>(?<attribute>[0-9]+)\)";
             var pattern = options.Language == Language.CS ? cspattern : fspattern;
 
             foreach (Match match in Regex.Matches(text, pattern, RegexOptions.None))
@@ -39,11 +39,11 @@ static class Program
                 {
                     Id = id,
                     Title = title,
-                    Type = (CardType)type,
+                    Category = (CardCategory)type,
                     Atk = atk,
                     Def = def,
                     Level = level,
-                    Race = (CardRace)race,
+                    Type = (CardType)race,
                     Attribute = (CardAttribute)attribute
                 };
             }
@@ -93,12 +93,12 @@ static class Program
                 cardText += $"    public static readonly Card {GetSafeName(card.Value.Title)} = new Card";
                 cardText += " { ";
                 cardText += $"Id = {card.Key}, ";
-                cardText += $"Title = \"{card.Value.Title}\", ";
-                cardText += $"Type = (CardType){(int)card.Value.Type}, ";
+                cardText += $"Title = \"{card.Value.Title.Replace("\"", "\\\"")}\", ";
+                cardText += $"Category = (CardCategory){(int)card.Value.Category}, ";
                 cardText += $"Atk = {card.Value.Atk}, ";
                 cardText += $"Def = {card.Value.Def}, ";
                 cardText += $"Level = {card.Value.Level}, ";
-                cardText += $"Race = (CardRace){(int)card.Value.Race}, ";
+                cardText += $"Type = (CardType){(int)card.Value.Type}, ";
                 cardText += $"Attribute = (CardAttribute){(int)card.Value.Attribute}";
                 cardText += " };";
             }
@@ -106,12 +106,12 @@ static class Program
             {
                 cardText += $"    static member {GetSafeName(card.Value.Title)} : Card = new Card(";
                 cardText += $"Id = {card.Key}, ";
-                cardText += $"Title = \"{card.Value.Title}\", ";
-                cardText += $"Type = enum<CardType>{(int)card.Value.Type}, ";
+                cardText += $"Title = \"{card.Value.Title.Replace("\"", "\\\"")}\", ";
+                cardText += $"Category = enum<CardCategory>{(int)card.Value.Category}, ";
                 cardText += $"Atk = {card.Value.Atk}, ";
                 cardText += $"Def = {card.Value.Def}, ";
                 cardText += $"Level = {card.Value.Level}, ";
-                cardText += $"Race = enum<CardRace>{(int)card.Value.Race}, ";
+                cardText += $"Type = enum<CardType>{(int)card.Value.Type}, ";
                 cardText += $"Attribute = enum<CardAttribute>{(int)card.Value.Attribute}";
                 cardText += ")";
             }

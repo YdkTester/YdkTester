@@ -1,6 +1,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
+    <CardsGenerator Condition=" '$(CardsGenerator)' == '' ">dotnet ydktester-generator</CardsGenerator>
     <CardsNamespace Condition=" '$(CardsNamespace)' == '' ">$(RootNameSpace)</CardsNamespace>
     <CardsLanguage Condition=" '$(CardsLanguage)' == '' ">cs</CardsLanguage>
     <CardsOutputPath Condition=" '$(CardsOutputPath)' == '' ">$(ProjectDir)Generated/Cards.$(CardsLanguage)</CardsOutputPath>
@@ -18,7 +19,7 @@
     <Exec Command="dotnet tool restore" />
     
     <Message Text="Generating Cards.$(CardsLanguage) -&gt; $(CardsOutputPath)" Importance="high" />
-    <Exec Command="dotnet ydktester-generator --edoProPath &quot;$(EdoProPath)&quot; --deckPath &quot;$(DeckPath)&quot; --namespace $(CardsNamespace) --language $(CardsLanguage) -o &quot;$(CardsOutputPath)&quot;" />
+    <Exec Command="$(CardsGenerator) --edoProPath &quot;$(EdoProPath)&quot; --deckPath &quot;$(DeckPath)&quot; --namespace $(CardsNamespace) --language $(CardsLanguage) -o &quot;$(CardsOutputPath)&quot;" />
   </Target>
 
 </Project>

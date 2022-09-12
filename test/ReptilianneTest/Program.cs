@@ -19,6 +19,8 @@ public class Program
             options.NumberOfIterations = 10;
         }
 
+        // options.StartingHand = new[] { Cards.NunutheOgdoadicRemnant, Cards.SnakeRain, Cards.FoolishBurial, Cards.NibiruthePrimalBeing, Cards.AlienStealthbuster };
+
         Runner.Run(options);
     }
 }

@@ -44,11 +44,11 @@ public class EdoProCardResolver : ICardResolver
             {
                 card.Title = readerTexts.GetString(0);
 
-                card.Type = (CardType)readerDatas.GetInt32(0);
+                card.Category = (CardCategory)readerDatas.GetInt32(0);
                 card.Atk = readerDatas.GetInt32(1);
                 card.Def = readerDatas.GetInt32(2);
                 card.Level = readerDatas.GetInt32(3) & 0xFFFF; // first 4 byes are pend scales (2 left, 2 right), next 4 bytes are the level
-                card.Race = (CardRace)readerDatas.GetInt32(4);
+                card.Type = (CardType)readerDatas.GetInt32(4);
                 card.Attribute = (CardAttribute)readerDatas.GetInt32(5);
             }
         }

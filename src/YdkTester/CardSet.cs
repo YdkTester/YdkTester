@@ -34,6 +34,8 @@ public struct CardSet
         }
     }
 
+    public CardReference CardReference => _cardReference;
+
     public List<Card> Cards
     {
         get
@@ -120,9 +122,13 @@ public struct CardSet
     public bool UseCard(Card card) => RemoveCard(card);
 
     public bool HasCard(Card card)
-    {
-        var positions = _cardReference.ResolveId(card.Id);
+        => HasCard(_cardReference.ResolveId(card.Id));
 
+    public bool HasCard(CardAction cardAction)
+        => HasCard(_cardReference.ResolveAction(cardAction));
+
+    private bool HasCard(byte[] positions)
+    {
         foreach (var position in positions)
         {
             if (IsBitSet(position))
@@ -134,26 +140,13 @@ public struct CardSet
         return false;
     }
 
-    public bool HasCard(Func<Card, bool> cardAction)
-    {
-        var ret = false;
-        ForEachCard(c => ret = cardAction.Invoke(c));
-        return ret;
-    }
-
     private void ForEachCard(Action<Card> cardAction)
-    {
-        ForEachCard(c => { cardAction.Invoke(c); return false; });
-    }
-
-    private void ForEachCard(Func<Card, bool> cardAction)
     {
         for (int i = 0; i < 64; i++)
         {
             if ((_part1 & (1UL << i)) > 0)
             {
-                if (cardAction.Invoke(_cardReference.GetCard(i)))
-                    return;
+                cardAction.Invoke(_cardReference.GetCard(i));
             }
         }
 
@@ -161,8 +154,7 @@ public struct CardSet
         {
             if ((_part2 & (1UL << i)) > 0)
             {
-                if (cardAction.Invoke(_cardReference.GetCard(i + 64)))
-                    return;
+                cardAction.Invoke(_cardReference.GetCard(i + 64));
             }
         }
     }
@@ -176,18 +168,14 @@ public struct CardSet
         return "{ " + string.Join(", ", list) + " }";
     }
 
-    /// <summary>
-    /// Used to draw the opening hand, bits between 0 and deck count must all be set for this to work.
-    /// </summary>
-    /// <returns></returns>
-    public CardSet DrawOpeningHand()
+    public CardSet DrawCards(int cardsToDraw)
     {
         var hand = new CardSet(_cardReference);
         var deckCount = _count;
 
-        for (int i = 0; i < deckCount && hand.Count < 5; i++)
+        for (int i = 0; i < deckCount && hand.Count < cardsToDraw; i++)
         {
-            var probability = (5.0 - hand.Count) / (deckCount - i);
+            var probability = ((double)(cardsToDraw - hand.Count)) / (deckCount - i);
             var isSelected = rng.NextDouble() <= probability;
 
             if (isSelected)
@@ -198,7 +186,7 @@ public struct CardSet
                 hand.SetBitOn((byte)i);
                 hand._count++;
 
-                if (hand.Count == 5.0)
+                if (hand.Count == cardsToDraw)
                     return hand;
             }
         }

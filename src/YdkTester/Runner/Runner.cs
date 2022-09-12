@@ -8,6 +8,94 @@ public class Runner
     public static void Run(params string[] args)
         => Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(o => Run(o));
 
+    class RunnerThread
+    {
+        private Thread? _thread;
+
+        public RunnerThread(Options options, List<ICondition> conditions, List<IGroupCondition> groupConditions)
+        {
+            Options = options;
+            Conditions = conditions;
+            GroupConditions = groupConditions;
+
+            NormalChecks = new Dictionary<ICondition, int>();
+            GroupChecks = new Dictionary<IGroupCondition, int>();
+            GroupArguments = new Dictionary<Type, bool>();
+        }
+
+        public Dictionary<ICondition, int> NormalChecks { get; }
+        public Dictionary<IGroupCondition, int> GroupChecks { get; }
+        public Dictionary<Type, bool> GroupArguments { get; }
+        public Options Options { get; }
+        public List<ICondition> Conditions { get; }
+        public List<IGroupCondition> GroupConditions { get; }
+
+        public void Start(Deck deck, int iterations)
+        {
+            if (_thread == null)
+            {
+                _thread = new Thread(new ThreadStart(() => RunIterations(deck, iterations)));
+                _thread.Start();
+            }
+        }
+
+        public void Wait()
+        {
+            if (_thread == null)
+                return;
+
+            _thread.Join();
+        }
+
+        private void RunIterations(Deck deck, int iterations)
+        {
+            foreach (var check in Conditions)
+                NormalChecks[check] = 0;
+
+            foreach (var check in GroupConditions)
+                GroupChecks[check] = 0;
+
+            for (int x = 0; x < iterations; x++)
+            {
+                var deckToSend = deck.MainDeck;
+
+                CardSet hand = Options.StartingHand == null ? 
+                    deckToSend.DrawCards(5) : new CardSet(deckToSend.CardReference);
+
+                if (Options.StartingHand != null)
+                {
+                    foreach (var card in Options.StartingHand)
+                    {
+                        deckToSend.RemoveCard(card);
+                        hand.AddCard(card);
+                    }
+                }
+
+                if (Options.Debug)
+                    Console.WriteLine($"[Hand {hand}]");
+
+                foreach (var normalCondition in Conditions)
+                {
+                    var isCheckSuccessful = normalCondition.Check(deckToSend, hand);
+                    GroupArguments[normalCondition.GetType()] = isCheckSuccessful;
+
+                    if (isCheckSuccessful)
+                        NormalChecks[normalCondition]++;
+
+                    if (Options.Debug)
+                        Console.WriteLine($"{normalCondition.Name}: {isCheckSuccessful}");
+                }
+
+                if (Options.Debug)
+                    Console.WriteLine("");
+
+                foreach (var groupCondition in GroupConditions)
+                    if (groupCondition.Check(GroupArguments))
+                        GroupChecks[groupCondition]++;
+            }
+        }
+    }
+
     public static void Run(Options options)
     {
         // TODO: Implement ygoprodeck.com API as an alternative tester
@@ -38,55 +126,44 @@ public class Runner
             }
         }
 
-        var _normalChecks = new Dictionary<ICondition, int>();
-        var _groupChecks = new Dictionary<IGroupCondition, int>();
-        var _groupArguments = new Dictionary<Type, bool>();
+        if (options.StartingHand != null)
+            options.NumberOfIterations = 1;
 
-        foreach (var check in conditions)
-            _normalChecks[check] = 0;
+        var threadCount = options.Debug ? 1 : Environment.ProcessorCount - 1;
+        var runnerThreads = new RunnerThread[threadCount];
+        var iterations = options.NumberOfIterations / threadCount;
+        var extraIterations = options.NumberOfIterations % threadCount;
 
-        foreach (var check in groupCounditions)
-            _groupChecks[check] = 0;
-
-        for (int x = 0; x < options.NumberOfIterations; x++)
+        for (int i = 0; i < runnerThreads.Length; i++)
         {
-            var deckToSend = deck;
-            var hand = deckToSend.MainDeck.DrawOpeningHand();
-
-            if (options.Debug)
-                Console.WriteLine($"[Hand {hand}]");
-
-            foreach (var normalCondition in conditions)
-            {
-                var isCheckSuccessful = normalCondition.Check(deckToSend, hand);
-                _groupArguments[normalCondition.GetType()] = isCheckSuccessful;
-
-                if (isCheckSuccessful)
-                    _normalChecks[normalCondition]++;
-
-                if (options.Debug)
-                    Console.WriteLine($"{normalCondition.Name}: {isCheckSuccessful}");
-            }
-
-            if (options.Debug)
-                Console.WriteLine("");
-
-            foreach (var groupCondition in groupCounditions)
-                if (groupCondition.Check(_groupArguments))
-                    _groupChecks[groupCondition]++;
+            runnerThreads[i] = new RunnerThread(options, conditions, groupCounditions);
+            runnerThreads[i].Start(deck, i == 0 ? (iterations + extraIterations) : iterations);
         }
 
+        for (int i = 0; i < runnerThreads.Length; i++)
+            runnerThreads[i].Wait();
+
         Console.WriteLine("[Conditions]");
-        foreach (var pair in _normalChecks)
+        foreach (var pair in runnerThreads[0].NormalChecks)
         {
+            var value = pair.Value;
+
+            for (int i = 1; i < runnerThreads.Length; i++)
+                value += runnerThreads[i].NormalChecks[pair.Key];
+
             Write(pair.Key.Name, pair.Value, options.NumberOfIterations);
         }
         Console.WriteLine("");
 
         Console.WriteLine("[Groups]");
-        foreach (var pair in _groupChecks)
+        foreach (var pair in runnerThreads[0].GroupChecks)
         {
-            Write(pair.Key.Name, pair.Value, options.NumberOfIterations);
+            var value = pair.Value;
+
+            for (int i = 1; i < runnerThreads.Length; i++)
+                value += runnerThreads[i].GroupChecks[pair.Key];
+
+            Write(pair.Key.Name, value, options.NumberOfIterations);
         }
     }
 

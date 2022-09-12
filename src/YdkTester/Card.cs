@@ -11,11 +11,11 @@ public struct Card
 
     public int Def { get; set; }
 
-    public CardType Type { get; set; }
+    public CardCategory Category { get; set; }
 
     public CardAttribute Attribute { get; set; }
 
-    public CardRace Race { get; set; }
+    public CardType Type { get; set; }
 
     public int Level { get; set; }
 

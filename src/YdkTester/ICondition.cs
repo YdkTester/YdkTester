@@ -5,5 +5,5 @@ public interface ICondition
 {
     string Name { get; }
 
-    bool Check(Deck deck, CardSet hand);
+    bool Check(CardSet deck, CardSet hand);
 }

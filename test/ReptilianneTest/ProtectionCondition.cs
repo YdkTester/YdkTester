@@ -6,7 +6,7 @@ public class ProtectionCondition : ICondition
 {
     public string Name => "Contains Protection";
 
-    public bool Check(Deck deck, CardSet hand)
+    public bool Check(CardSet deck, CardSet hand)
     {
         return hand.HasCard(Cards.InstantFusion) ||
             hand.HasCard(Cards.CalledbytheGrave) ||
