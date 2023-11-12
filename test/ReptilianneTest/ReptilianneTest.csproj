@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <DeckName>L_Reptilianne</DeckName>
+    <DeckName>M_Reptilianne</DeckName>
     <CardsGenerator>dotnet run --project ../../src/YdkTester.Generator/YdkTester.Generator.csproj -- </CardsGenerator>
   </PropertyGroup>
 

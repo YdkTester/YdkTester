@@ -9,7 +9,7 @@ namespace ReptilianneTest;
 
 public class Cards
 {
-    public const string DeckPath = "/Applications/ProjectIgnis/deck/L_Reptilianne.ydk";
+    public const string DeckPath = "/Applications/ProjectIgnis/deck/M_Reptilianne.ydk";
 
     public static readonly Card NibiruthePrimalBeing = new Card { Id = 27204311, Title = "Nibiru, the Primal Being", Category = (CardCategory)33, Atk = 3000, Def = 600, Level = 11, Type = (CardType)256, Attribute = (CardAttribute)16 };
 
@@ -139,7 +139,19 @@ public class Cards
 
     public static readonly Card SmallWorld = new Card { Id = 89558743, Title = "Small World", Category = (CardCategory)2, Atk = 0, Def = 0, Level = 0, Type = (CardType)0, Attribute = (CardAttribute)0 };
 
-    public static readonly Card TherionEmpressAlasia = new Card { Id = 48806195, Title = "Therion \"Empress\" Alasia", Category = (CardCategory)33, Atk = 2100, Def = 2500, Level = 8, Type = (CardType)524288, Attribute = (CardAttribute)1 };
+    public static readonly Card ThunderKingtheLightningstrikeKaiju = new Card { Id = 48770333, Title = "Thunder King, the Lightningstrike Kaiju", Category = (CardCategory)33, Atk = 3300, Def = 2100, Level = 9, Type = (CardType)4096, Attribute = (CardAttribute)16 };
+
+    public static readonly Card ReptilianneVaskii = new Card { Id = 16886617, Title = "Reptilianne Vaskii", Category = (CardCategory)33554465, Atk = 2600, Def = 0, Level = 8, Type = (CardType)524288, Attribute = (CardAttribute)32 };
+
+    public static readonly Card CosmicCyclone = new Card { Id = 8267140, Title = "Cosmic Cyclone", Category = (CardCategory)65538, Atk = 0, Def = 0, Level = 0, Type = (CardType)0, Attribute = (CardAttribute)0 };
+
+    public static readonly Card UnchainedAbomination = new Card { Id = 29479265, Title = "Unchained Abomination", Category = (CardCategory)67108897, Atk = 3000, Def = 135, Level = 4, Type = (CardType)8, Attribute = (CardAttribute)32 };
+
+    public static readonly Card NephilabysstheOgdoadicOverlord = new Card { Id = 46518210, Title = "Nephilabyss, the Ogdoadic Overlord", Category = (CardCategory)33, Atk = 2200, Def = 3100, Level = 10, Type = (CardType)524288, Attribute = (CardAttribute)32 };
+
+    public static readonly Card DogorantheMadFlameKaiju = new Card { Id = 93332803, Title = "Dogoran, the Mad Flame Kaiju", Category = (CardCategory)33, Atk = 3000, Def = 1200, Level = 8, Type = (CardType)65536, Attribute = (CardAttribute)4 };
+
+    public static readonly Card OgdoadicDaybreak = new Card { Id = 78789356, Title = "Ogdoadic Daybreak", Category = (CardCategory)65538, Atk = 0, Def = 0, Level = 0, Type = (CardType)0, Attribute = (CardAttribute)0 };
 
     public static readonly Card ApollousaBowoftheGoddess = new Card { Id = 4280259, Title = "Apollousa, Bow of the Goddess", Category = (CardCategory)67108897, Atk = -2, Def = 135, Level = 4, Type = (CardType)4, Attribute = (CardAttribute)8 };
 

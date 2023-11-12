@@ -6,97 +6,54 @@ public class CosmicSlicerLockCondition : ICondition
 {
     public string Name => "Cosmic Slicer Lock";
 
-    private static CardAction _summonableReptileExceptKageAndCoatl = new CardAction(c => c != Cards.Kagetokage && c != Cards.ReptilianneCoatl && c.Category.HasFlag(CardCategory.Monster) && c.Level == 4 && c.Type == CardType.Reptile);
-    private static CardAction _reptilianneSpellOrTrap = new CardAction(c => c.Title.Contains("Reptilianne") && (c.Category.HasFlag(CardCategory.Spell) || c.Category.HasFlag(CardCategory.Trap)));
+    private static CardAction _summonableReptileExceptKageAndCoatl = new(c => c != Cards.Kagetokage && c != Cards.ReptilianneCoatl && c.Category.HasFlag(CardCategory.Monster) && c.Level == 4 && c.Type == CardType.Reptile);
+    private static CardAction _nonRamificatorsST = new(c => c != Cards.ReptilianneRamifications && c.Title.Contains("Reptilianne") && (c.Category.HasFlag(CardCategory.Spell) || c.Category.HasFlag(CardCategory.Trap)));
+    private static CardAction _nonNunuReptileMonster = new(c => c.Type == CardType.Reptile && c != Cards.NunutheOgdoadicRemnant);
+    private static CardAction _summonableMonster = new(c => c.Category.HasFlag(CardCategory.Monster) && c.Level <= 4);
+    private static CardAction _darkReptileMonster = new(c => c.Type == CardType.Reptile && c.Level == 4 && c.Attribute == CardAttribute.Dark);
 
     public bool Check(CardSet deck, CardSet hand)
     {
-        if (hand.UseCard(Cards.SnakeRain) || hand.UseCard(Cards.NunutheOgdoadicRemnant))
+        if (hand.HasCard(Cards.SnakeRain) || hand.HasCard(Cards.NunutheOgdoadicRemnant))
             return true;
 
-        if (CheckFullLock(deck, hand))
+        if (hand.HasCard(Cards.SmallWorld) && (hand.HasCard(Cards.EffectVeiler) || hand.HasCard(_nonNunuReptileMonster)))
             return true;
 
-        if (CheckAlienKidCombo(deck, hand))
+        if (CheckNauyaCombos(deck, hand))
+            return true;
+
+        if (CheckCoatlCombos(deck, hand))
             return true;
 
         return false;
     }
 
-    private bool CheckFullLock(CardSet deck, CardSet hand)
+    private static bool CheckNauyaCombos(CardSet deck, CardSet hand)
     {
-        deck.AddCard(Cards.AlienStealthbuster);
-
-        if (CheckAlienKidCombo(deck, hand))
-        {
-            return hand.HasCard(Cards.ReptilianneSpawn) || hand.HasCard(Cards.ReptilianneRamifications);
-        }
-
-        return false;
-    }
-
-    private bool CheckAlienKidCombo(CardSet deck, CardSet hand)
-    {
-        if (!deck.HasCard(Cards.AlienStealthbuster))
+        if (hand.UseCard(Cards.NauyatheOgdoadicRemnant))
             return false;
 
-        // Remvoe alien kid from hand for testing purposes
-        hand.UseCard(Cards.AlienKid);
+        if (hand.HasCard(_summonableMonster))
+            return true;
 
-        var keurseInHand = hand.UseCard(Cards.KeursetheOgdoadicLight);
+        if (hand.HasCard(Cards.ReptilianneRamifications) && deck.HasCard(_nonRamificatorsST))
+            return true;
 
-        // If zohah is in hand, we'll be able to discard keurse
-        if (hand.HasCard(Cards.ZohahtheOgdoadicBoundless))
-            keurseInHand = false;
+        return false;
+    }
 
-        var summonCounter = 0;
+    private static bool CheckCoatlCombos(CardSet deck, CardSet hand)
+    {
+        if (!hand.UseCard(Cards.ReptilianneCoatl))
+            return false;
 
-        // Resolve ramifications
-        if (hand.HasCard(Cards.ReptilianneRamifications) && deck.HasCard(_reptilianneSpellOrTrap))
-        {
-            hand.UseCard(Cards.ReptilianneRamifications);
+        if (hand.HasCard(_darkReptileMonster))
+            return true;
 
-            if (!hand.HasCard(Cards.ReptilianneCoatl))
-                hand.AddCard(Cards.ReptilianneCoatl);
-            else
-                hand.AddCard(Cards.ReptilianneScylla);
+        if (hand.HasCard(Cards.ReptilianneRamifications) && deck.HasCard(_nonRamificatorsST))
+            return true;
 
-            keurseInHand = false;
-        }
-
-        // Use foolish burial
-        if (hand.UseCard(Cards.FoolishBurial))
-        {
-            if (keurseInHand)
-                keurseInHand = false;
-            else
-                summonCounter++;
-        }
-
-        var coatlInHand = hand.UseCard(Cards.ReptilianneCoatl);
-        var normalSummoned = false;
-
-        // Do a normal summon of not coatl
-        if (hand.HasCard(_summonableReptileExceptKageAndCoatl))
-        {
-            normalSummoned = true;
-            summonCounter++;
-
-            if (coatlInHand)
-                summonCounter++;
-        }
-
-        // Do a normal summon of coatl
-        if (!normalSummoned && coatlInHand)
-        {
-            normalSummoned = true;
-            summonCounter++;
-        }
-
-        // Summon kagetokage if we normal summoned
-        if (normalSummoned && hand.UseCard(Cards.Kagetokage))
-            summonCounter++;
-
-        return summonCounter >= 2 && !keurseInHand;
+        return false;
     }
 }

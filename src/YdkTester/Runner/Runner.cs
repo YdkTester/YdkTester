@@ -18,9 +18,9 @@ public class Runner
             Conditions = conditions;
             GroupConditions = groupConditions;
 
-            NormalChecks = new Dictionary<ICondition, int>();
-            GroupChecks = new Dictionary<IGroupCondition, int>();
-            GroupArguments = new Dictionary<Type, bool>();
+            NormalChecks = [];
+            GroupChecks = [];
+            GroupArguments = [];
         }
 
         public Dictionary<ICondition, int> NormalChecks { get; }
@@ -151,7 +151,7 @@ public class Runner
             for (int i = 1; i < runnerThreads.Length; i++)
                 value += runnerThreads[i].NormalChecks[pair.Key];
 
-            Write(pair.Key.Name, pair.Value, options.NumberOfIterations);
+            Write(pair.Key.Name, value, options.NumberOfIterations);
         }
         Console.WriteLine("");
 

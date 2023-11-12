@@ -8,10 +8,13 @@ public class EdoProCardResolver : ICardResolver
 
     public EdoProCardResolver(string edoProPath)
     {
-        _sqliteConnections = new List<SqliteConnection>();
+        _sqliteConnections = [];
+        SearchForCdb(Path.Combine(edoProPath, "repositories/"));
+    }
 
-        var directortyPath = Path.Combine(edoProPath, "repositories/delta-utopia");
-        foreach (var filePath in Directory.GetFiles(directortyPath))
+    private void SearchForCdb(string cwd)
+    {
+        foreach (var filePath in Directory.GetFiles(cwd))
         {
             if (filePath.EndsWith(".cdb"))
             {
@@ -20,6 +23,11 @@ public class EdoProCardResolver : ICardResolver
 
                 _sqliteConnections.Add(connection);
             }
+        }
+
+        foreach (var directoryPath in Directory.GetDirectories(cwd))
+        {
+            SearchForCdb(directoryPath);
         }
     }
 
@@ -50,9 +58,11 @@ public class EdoProCardResolver : ICardResolver
                 card.Level = readerDatas.GetInt32(3) & 0xFFFF; // first 4 byes are pend scales (2 left, 2 right), next 4 bytes are the level
                 card.Type = (CardType)readerDatas.GetInt32(4);
                 card.Attribute = (CardAttribute)readerDatas.GetInt32(5);
+                return card;
             }
         }
 
-        return card;
+        throw new Exception($"Failed to find card: {id}");
+        // return card;
     }
 }
