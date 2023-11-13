@@ -4,8 +4,12 @@ namespace YdkTester.Runner;
 
 public class Options
 {
+    public static Options Instance { get; set; } = new Options();
+
     public Options()
     {
+        Instance = this;
+
         DeckPath = "";
         NumberOfIterations = 100000;
         

@@ -3,40 +3,31 @@ namespace YdkTester;
 
 public struct CardSet
 {
-    private static Random rng = new Random();
+    private static readonly Random rng = new();
 
-    // Max card count is 60 + 15 + 15 = 90 (64 + 32 = 96)
-    private ulong _part1;
-    private uint _part2; // 6 spare bits are here, can we use them? :D
-
-    private byte _count;
+    private CardSetData _data;
     private CardReference _cardReference; // This is a reference
 
     public CardSet(CardReference deckReference)
     {
         _cardReference = deckReference;
-        _part1 = 0;
-        _part2 = 0;
-        _count = 0;
     }
 
     public CardSet(CardReference deckReference, byte bitstart, byte bitend)
     {
         _cardReference = deckReference;
-        _part1 = 0;
-        _part2 = 0;
-        _count = 0;
 
         for (byte i = bitstart; i < bitend; i++)
         {
-            SetBitOn(i);
-            _count++;
+            _data.SetBitOn(i);
         }
     }
 
-    public CardReference CardReference => _cardReference;
+    public readonly int Count => _data.Count;
 
-    public List<Card> Cards
+    public readonly CardReference CardReference => _cardReference;
+
+    public readonly List<Card> Cards
     {
         get
         {
@@ -44,7 +35,7 @@ public struct CardSet
 
             for (byte i = 0; i < 96; i++)
             {
-                if (IsBitSet(i))
+                if (_data.IsBitSet(i))
                 {
                     ret.Add(_cardReference.GetCard(i));
                 }
@@ -54,47 +45,19 @@ public struct CardSet
         }
     }
 
-    public int Count => _count;
-
-    private bool IsBitSet(byte offset)
-        => (offset < 64) ?
-            (_part1 & (1UL << offset)) > 0 :
-            (_part2 & (1U << (offset - 64))) > 0;
-
-    private void SetBitOn(byte offset)
-    {
-        if (offset < 64)
-            _part1 = _part1 | (1UL << offset);
-        else
-            _part2 = _part2 | (1U << (offset - 64));
-    }
-
-    private void SetBitOff(byte offset)
-    {
-        if (offset < 64)
-            _part1 = _part1 & ~(1UL << offset);
-        else
-            _part2 = _part2 & ~(1U << (offset - 64));
-    }
-
-    private void SetBit(byte offset, bool value)
-    {
-        if (value)
-            SetBitOn(offset);
-        else
-            SetBitOff(offset);
-    }
-
     public bool AddCard(Card card)
     {
-        var positions = _cardReference.ResolveId(card.Id);
+        var positions = _cardReference.ResolveArray(card.Id);
 
-        foreach (var position in positions)
+        for (int i = 0; i < 3; i++)
         {
-            if (!IsBitSet(position))
+            var position = positions.GetAt(i);
+            if (position < 0)
+                return false;
+
+            if (!_data.IsBitSet(position))
             {
-                SetBitOn(position);
-                _count++;
+                _data.SetBitOn(position);
                 return true;
             }
         }
@@ -102,59 +65,45 @@ public struct CardSet
         return false;
     }
 
-    public bool RemoveCard(Card card)
+    public bool RemoveCard(Card card) => RemoveCard(card.Id);
+
+    public bool RemoveCard(int cardId)
     {
-        var positions = _cardReference.ResolveId(card.Id);
+        var positions = _cardReference.ResolveArray(cardId);
 
-        foreach (var position in positions)
+        for (int i = 0; i < 3; i++)
         {
-            if (IsBitSet(position))
+            var position = positions.GetAt(i);
+            if (position < 0)
+                return false;
+
+            if (_data.IsBitSet(position))
             {
-                SetBitOff(position);
-                _count--;
+                _data.SetBitOff(position);
                 return true;
             }
         }
 
         return false;
     }
+
+    public bool UseCard(int cardId) => RemoveCard(cardId);
 
     public bool UseCard(Card card) => RemoveCard(card);
 
     public bool HasCard(Card card)
-        => HasCard(_cardReference.ResolveId(card.Id));
+        => _data.Contains(_cardReference.ResolveId(card.Id));
 
     public bool HasCard(CardAction cardAction)
-        => HasCard(_cardReference.ResolveAction(cardAction));
-
-    private bool HasCard(byte[] positions)
-    {
-        foreach (var position in positions)
-        {
-            if (IsBitSet(position))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+        => _data.Contains(_cardReference.ResolveAction(cardAction));
 
     private void ForEachCard(Action<Card> cardAction)
     {
-        for (int i = 0; i < 64; i++)
+        for (int i = 0; i < 128; i++)
         {
-            if ((_part1 & (1UL << i)) > 0)
+            if (_data.IsBitSet((byte)i))
             {
                 cardAction.Invoke(_cardReference.GetCard(i));
-            }
-        }
-
-        for (int i = 0; i < 64; i++)
-        {
-            if ((_part2 & (1UL << i)) > 0)
-            {
-                cardAction.Invoke(_cardReference.GetCard(i + 64));
             }
         }
     }
@@ -162,57 +111,61 @@ public struct CardSet
     public override string ToString()
     {
         var list = new List<string>();
-
         ForEachCard(c => list.Add(c.Title));
-
         return "{ " + string.Join(", ", list) + " }";
     }
 
     public CardSet DrawCards(int cardsToDraw)
     {
         var hand = new CardSet(_cardReference);
-        var deckCount = _count;
+        var deckCount = Count;
+        var currentIndex = 0;
 
-        for (int i = 0; i < deckCount && hand.Count < cardsToDraw; i++)
+        for (int i = 0; i < 128 && hand.Count < cardsToDraw; i++)
         {
-            var probability = ((double)(cardsToDraw - hand.Count)) / (deckCount - i);
+            if (!_data.IsBitSet((byte)i))
+                continue;
+
+            var probability = ((double)(cardsToDraw - hand.Count)) / (deckCount - currentIndex);
             var isSelected = rng.NextDouble() <= probability;
 
             if (isSelected)
             {
-                SetBitOff((byte)i);
-                _count--;
-
-                hand.SetBitOn((byte)i);
-                hand._count++;
+                _data.SetBitOff((byte)i);
+                hand._data.SetBitOn((byte)i);
 
                 if (hand.Count == cardsToDraw)
                     return hand;
             }
+
+            currentIndex++;
         }
 
-        return hand;
+        throw new Exception("Failed to draw cards!");
     }
 
-    public Card DrawCard()
+    public Card DrawCard(bool random = true)
     {
-        var deckCount = _count;
+        var currentIndex = 0;
+        var deckCount = Count;
 
-        for (int i = 0; i < deckCount; i++)
+        for (int i = 0; i < 128; i++)
         {
-            var probability = (5.0 - 1) / (deckCount - i);
-            var isSelected = rng.NextDouble() <= probability;
+            if (!_data.IsBitSet((byte)i))
+                continue;
+
+            var probability = (5.0 - 1) / (deckCount - currentIndex);
+            var isSelected = !random || rng.NextDouble() <= probability;
 
             if (isSelected)
             {
-                SetBitOff((byte)i);
-                _count--;
-
+                _data.SetBitOff((byte)i);
                 return _cardReference.GetCard(i);
             }
+
+            currentIndex++;
         }
 
-        // Ugh
-        throw new NotImplementedException();
+        throw new Exception("Failed to draw a card!");
     }
 }

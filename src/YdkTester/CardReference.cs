@@ -3,62 +3,68 @@ namespace YdkTester;
 
 public class CardReference
 {
-    private static byte[] _emptyArray = new byte[0];
+    private static readonly byte[] _emptyArray = [];
 
-    private Dictionary<int, byte[]> _cardIdResolver;
-    private Dictionary<int, byte[]> _cardActionResolver;
-    private List<Card> _cards;
+    private readonly Dictionary<int, CardSetArray> _cardArrayResolver;
+    private readonly Dictionary<int, CardSetData> _cardIdResolver;
+    private readonly Dictionary<int, CardSetData> _cardActionResolver;
+    private readonly List<Card> _cards;
 
     public CardReference(List<Card> cards)
     {
-        _cardIdResolver = new Dictionary<int, byte[]>();
-        _cardActionResolver = new Dictionary<int, byte[]>();
+        _cardArrayResolver = [];
+        _cardIdResolver = [];
+        _cardActionResolver = [];
         _cards = cards;
 
-        // TODO: Fix
         for (int i = 0; i < cards.Count; i++)
         {
-            if (_cardIdResolver.TryGetValue(cards[i].Id, out byte[]? positions))
-            {
-                var posArray = positions.ToList();
-                posArray.Add((byte)i);
+            if (!_cardIdResolver.TryGetValue(cards[i].Id, out CardSetData data))
+                data = new CardSetData();
+            data.SetBitOn(i);
+            _cardIdResolver[cards[i].Id] = data;
 
-                _cardIdResolver[cards[i].Id] = posArray.ToArray();
-            }
-            else
-            {
-                _cardIdResolver[cards[i].Id] = new byte[] { (byte)i };
-            }
+            if (!_cardArrayResolver.TryGetValue(cards[i].Id, out CardSetArray arr))
+                arr = new CardSetArray();
+            arr.Add(i);
+            _cardArrayResolver[cards[i].Id] = arr;
         }
     }
 
-    public byte[] ResolveId(int id)
+    public CardSetData ResolveId(int id)
     {
-        byte[]? ret;
-        _cardIdResolver.TryGetValue(id, out ret);
-        return ret ?? _emptyArray;
+        if (!_cardIdResolver.TryGetValue(id, out CardSetData data))
+            data = new CardSetData();
+        
+        return data;
     }
 
-    public byte[] ResolveAction(CardAction action)
+    public CardSetArray ResolveArray(int id)
     {
-        byte[]? ret;
+        if (!_cardArrayResolver.TryGetValue(id, out CardSetArray arr))
+            arr = new CardSetArray();
+        
+        return arr;
+    }
 
-        if (!_cardActionResolver.TryGetValue(action.Id, out ret))
+    public CardSetData ResolveAction(CardAction action)
+    {
+        if (!_cardActionResolver.TryGetValue(action.Id, out CardSetData data))
         {
-            var validBytes = new List<byte>();
+            data = new CardSetData();
 
             for (int i = 0; i < _cards.Count; i++)
             {
                 if (action.Check(_cards[i]))
                 {
-                    validBytes.Add((byte)i);
+                    data.SetBitOn(i);
                 }
             }
 
-            ret = _cardActionResolver[action.Id] = validBytes.ToArray();
+            _cardActionResolver[action.Id] = data;
         }
 
-        return ret ?? _emptyArray;
+        return data;
     }
 
     public Card GetCard(int offset)
